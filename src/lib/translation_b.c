@@ -10,7 +10,6 @@ translation(int64_t num) {
         bin_num[i] = '0';
     }
     int32_t idx = 0;
-    uint32_t bits_in_type = MAX_BIT_LEN;
     int64_t mask = 1;
     mask = mask << (MAX_BIT_LEN - 1);
     while (idx < MAX_BIT_LEN && num != 0) {
