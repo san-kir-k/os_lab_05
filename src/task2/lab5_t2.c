@@ -57,18 +57,16 @@ skip_str() {
 }
 
 void 
-handler_loop(  void* dl_sqr_handle, void* dl_trb_handle, 
-            void* dl_sqt_handle, void* dl_trt_handle) {
+handler_loop(   void* dl_sqr_handle, void* dl_trb_handle, 
+                void* dl_sqt_handle, void* dl_trt_handle) {
     float (*square)(float, float);
     char* (*translation)(int64_t);
-    char* error;
-    printf("1\n");
+    char* error = NULL;
     square = (float (*)(float, float))dlsym(dl_sqr_handle, SQ_FUNC);
     if ((error = dlerror()) != NULL)  {
         perror(error);
         return;
     }
-    printf("2\n");
     translation = (char* (*)(int64_t))dlsym(dl_trb_handle, TR_FUNC);
     if ((error = dlerror()) != NULL)  {
         perror(error);
@@ -109,7 +107,7 @@ handler_loop(  void* dl_sqr_handle, void* dl_trb_handle,
                 translation = (char* (*)(int64_t))dlsym(dl_trb_handle, TR_FUNC);
 
             }
-            printf("Switched relizations from %d to %d.\n", realization + 1, (realization + 1) % 2 + 1);
+            printf("Switched realizations from %d to %d.\n", realization + 1, (realization + 1) % 2 + 1);
             realization = (realization + 1) % 2;
             break;
         case 1:
@@ -120,7 +118,7 @@ handler_loop(  void* dl_sqr_handle, void* dl_trb_handle,
                 skip_str();
                 break;
             }
-            printf("Result is:\n%f\n", square(a, b));
+            printf("Result is:\n%f\n", (*square)(a, b));
             break;
         case 2:
             if ((ret_scanf_val = scanf("%lld", &num)) == EOF) {
@@ -130,7 +128,7 @@ handler_loop(  void* dl_sqr_handle, void* dl_trb_handle,
                 skip_str();
                 break;
             }
-            char* returned_str = translation(num);
+            char* returned_str = (*translation)(num);
             if (returned_str == NULL) {
                 perror("Memory allocation error.");
             }
@@ -145,41 +143,41 @@ handler_loop(  void* dl_sqr_handle, void* dl_trb_handle,
 }
 
 int32_t
-dylb_init(  void* dl_sqr_handle, void* dl_trb_handle, 
-            void* dl_sqt_handle, void* dl_trt_handle) {
-    dl_sqr_handle = dlopen(SQ_R_LIB, RTLD_LAZY);
-    if (!dl_sqr_handle) {
+dylb_init(  void** dl_sqr_handle, void** dl_trb_handle, 
+            void** dl_sqt_handle, void** dl_trt_handle) {
+    *dl_sqr_handle = dlopen(SQ_R_LIB, RTLD_LAZY);
+    if (!(*dl_sqr_handle)) {
         perror(dlerror());
         return SQR_LIB_CREATE_ERR;
     }
-    dl_trb_handle = dlopen(TR_B_LIB, RTLD_LAZY);
-    if (!dl_trb_handle) {
-        if (dlclose(dl_sqr_handle) != 0) {
+    *dl_trb_handle = dlopen(TR_B_LIB, RTLD_LAZY);
+    if (!(*dl_trb_handle)) {
+        if (dlclose((*dl_sqr_handle)) != 0) {
             fprintf(stderr, "Closing SQR lib error.");
         }
         perror(dlerror());
         return TRB_LIB_CREATE_ERR;
     }      
-    dl_sqt_handle = dlopen(SQ_T_LIB, RTLD_LAZY);
-    if (!dl_sqt_handle) {
-        if (dlclose(dl_sqr_handle) != 0) {
+    *dl_sqt_handle = dlopen(SQ_T_LIB, RTLD_LAZY);
+    if (!(*dl_sqt_handle)) {
+        if (dlclose((*dl_sqr_handle)) != 0) {
             fprintf(stderr, "Closing SQR lib error.");
         } 
-        if (dlclose(dl_trb_handle) != 0) {
+        if (dlclose((*dl_trb_handle)) != 0) {
             fprintf(stderr, "Closing TRB lib error.");
         }
         perror(dlerror());
         return SQT_LIB_CREATE_ERR;
     } 
-    dl_trt_handle = dlopen(TR_T_LIB, RTLD_LAZY);
-    if (!dl_trt_handle) {
-        if (dlclose(dl_sqr_handle) != 0) {
+    *dl_trt_handle = dlopen(TR_T_LIB, RTLD_LAZY);
+    if (!(*dl_trt_handle)) {
+        if (dlclose((*dl_sqr_handle)) != 0) {
             fprintf(stderr, "Closing SQR lib error.");
         } 
-        if (dlclose(dl_trb_handle) != 0) {
+        if (dlclose((*dl_trb_handle)) != 0) {
             fprintf(stderr, "Closing TRB lib error.");
         }
-        if (dlclose(dl_sqt_handle) != 0) {
+        if (dlclose((*dl_sqt_handle)) != 0) {
             fprintf(stderr, "Closing SQT lib error.");
         }
         perror(dlerror());
@@ -189,22 +187,22 @@ dylb_init(  void* dl_sqr_handle, void* dl_trb_handle,
 }
 
 int32_t
-dylb_close(  void* dl_sqr_handle, void* dl_trb_handle, 
-            void* dl_sqt_handle, void* dl_trt_handle) {
+dylb_close( void** dl_sqr_handle, void** dl_trb_handle, 
+            void** dl_sqt_handle, void** dl_trt_handle) {
     int32_t to_return = 0;
-    if (dlclose(dl_sqr_handle) != 0) {
+    if (dlclose((*dl_sqr_handle)) != 0) {
         perror(dlerror());
         to_return = SQR_LIB_CLOSE_ERR;
     }
-    if (dlclose(dl_trb_handle) != 0) {
+    if (dlclose((*dl_trb_handle)) != 0) {
         perror(dlerror());
         to_return = TRB_LIB_CLOSE_ERR;
     }
-    if (dlclose(dl_sqt_handle) != 0) {
+    if (dlclose((*dl_sqt_handle)) != 0) {
         perror(dlerror());
         to_return = SQT_LIB_CLOSE_ERR;
     }
-    if (dlclose(dl_trt_handle) != 0) {
+    if (dlclose((*dl_trt_handle)) != 0) {
         perror(dlerror());
         to_return = TRT_LIB_CLOSE_ERR;
     }
@@ -218,13 +216,13 @@ main() {
     void* dl_sqt_handle = NULL;
     void* dl_trt_handle = NULL;
     int32_t init_return = 0;
-    if ((init_return = dylb_init(dl_sqr_handle, dl_trb_handle, dl_sqt_handle, dl_trt_handle)) != 0) {
+    if ((init_return = dylb_init(&dl_sqr_handle, &dl_trb_handle, &dl_sqt_handle, &dl_trt_handle)) != 0) {
         return init_return;
     }
     usage();
     handler_loop(dl_sqr_handle, dl_trb_handle, dl_sqt_handle, dl_trt_handle);
     int32_t close_return = 0;
-    if ((close_return = dylb_close(dl_sqr_handle, dl_trb_handle, dl_sqt_handle, dl_trt_handle)) != 0) {
+    if ((close_return = dylb_close(&dl_sqr_handle, &dl_trb_handle, &dl_sqt_handle, &dl_trt_handle)) != 0) {
         return close_return;
     }
     return 0;
