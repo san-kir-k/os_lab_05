@@ -113,9 +113,13 @@ handler_loop(   void* dl_sqr_handle, void* dl_trb_handle,
         case 1:
             if ((ret_scanf_val = scanf("%f%f", &a, &b)) == EOF) {
                 break;
-            } else if (ret_scanf_val == 0) {
+            } else if (ret_scanf_val != 2) {
                 printf("Invalid args, try again.\n");
                 skip_str();
+                break;
+            }
+            if (a <= 0.0 || b <= 0.0) {
+                printf("Sides must be positive, try again.\n");
                 break;
             }
             printf("Result is:\n%f\n", (*square)(a, b));
