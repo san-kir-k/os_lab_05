@@ -1,5 +1,5 @@
 CXX = gcc
-CXX_FLAGS = -pedantic -Wall -Werror -L ../lib
+CXX_FLAGS = -pedantic -Wall -Werror -L .
 CXX_OBJ_LIB_FLAGS = -c -pedantic -Wall -Werror -fpic
 CXX_LIB_FLAGS = -shared 
 NAME = lab5_t1
