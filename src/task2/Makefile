@@ -1,6 +1,6 @@
 CXX = gcc
-CXX_FLAGS = -pedantic -Wall -Werror -rdynamic
-CXX_OBJ_LIB_FLAGS = -c -pedantic -Wall -Werror -fpic
+CXX_FLAGS = -pedantic -Wall -Werror -L . -rdynamic
+CXX_OBJ_LIB_FLAGS = -c -pedantic -Wall -Werror
 CXX_LIB_FLAGS = -shared 
 NAME = lab5_t2
 NAME_LSQR = libsquarer.so
