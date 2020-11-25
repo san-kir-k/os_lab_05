@@ -7,7 +7,8 @@
 #include "../lib/translation_b.h"
 #include "../lib/square_r.h"
 
-void usage() {
+void 
+usage() {
     printf("\t+-------------+------------------------------------------+\n");
     printf("\t|   command   |               description                |\n");
     printf("\t|-------------+------------------------------------------|\n");
@@ -20,14 +21,16 @@ void usage() {
     printf("\t+-------------+------------------------------------------+\n\n");
 }
 
-void skip_str() {
+void 
+skip_str() {
     int c = getchar();
     while (c != '\n' && c != EOF) {
         c = getchar();
     }
 }
 
-void handler_loop() {
+void 
+handler_loop() {
     int32_t cmd;
     int8_t ret_scanf_val = 0;
     while (true) {
@@ -73,7 +76,8 @@ void handler_loop() {
     }
 }
 
-int main() {
+int 
+main() {
     usage();
     handler_loop();
     return 0;
