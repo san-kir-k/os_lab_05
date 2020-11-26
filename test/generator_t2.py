@@ -35,7 +35,7 @@ def main():
             test.append([1, -1.0, 109.09])
             test.append([2, "qwerty"])
             test.append(["Hello world"])
-            test.append([0, 2, 1])
+            test.append([42])
 
         test_name = "{}/tests_n_ans_t2/test_{}".format(test_dir, test_count + 1)
         with open(f'{test_name}.txt', 'w') as ftest:
