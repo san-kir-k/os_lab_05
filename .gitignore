@@ -55,3 +55,5 @@ dkms.conf
 lab5*
 #???
 .DS_Store
+#tests
+test/test_n*
