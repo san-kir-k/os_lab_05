@@ -31,7 +31,7 @@ function main()
     return 2
   fi
 
-  cd ../../test && mkdir tests_n_ans_t1 && mkdir tests_n_ans_t2
+  mkdir tests_n_ans_t1 && mkdir tests_n_ans_t2
   log_info "Stage #2.1 Test generating for task1..."
   if ! python3 generator_t1.py . ; then
     log_error "Failed to generate tests for task1."
